@@ -191,8 +191,8 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
     if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
       this.apiService.delete(id).subscribe({
         next: () => {
-          alert('Producto eliminado correctamente');
           this.loadProductos();
+          alert('Producto eliminado correctamente');
         },
         error: (err) => {
           console.error('Error al eliminar producto:', err);
