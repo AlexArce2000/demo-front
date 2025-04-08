@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { Tabulator } from 'tabulator-tables';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -11,7 +12,8 @@ import { Tabulator } from 'tabulator-tables';
 })
 export class ProductoListComponent implements OnInit, AfterViewInit{
   constructor(
-    private apiService: ApiService
+    private apiService: ApiService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -29,11 +31,12 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
         this.eliminarProduct(id);
       }
       
-      // Manejar clic en botón de editar (puedes implementar esto después)
+      // editar producto
       if (target.closest('.btn-primary')) {
         const button = target.closest('.btn-primary') as HTMLButtonElement;
         const id = Number(button.dataset['id']);
         console.log('Editar producto con ID:', id);
+        this.router.navigate(['/editar', id]);
       }
     });
   }
@@ -47,7 +50,7 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
         item.fechaCreacion = this.formatter(item.fechaCreacion);
         item.fechaModificacion = this.formatter(item.fechaModificacion);
         item.precio = this.formatNumberWithThousandsSeparator(item.precio);
-        item.acciones= this.generateActionButtons(item.id)
+        item.acciones= this.generateActionButtons(item.id);
       });
       console.log('Datos formateados:', data);
       this.initTabulator(data);
@@ -151,10 +154,7 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
           title: 'Activo', 
           field: 'activo',
           formatter: 'tickCross',
-          headerFilter: 'tickCross',
-          headerFilterParams: {
-            tristate: false
-          }
+          headerFilter: 'tickCross'
         },
         {
           title: 'Fecha creación',
@@ -180,18 +180,7 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
           headerSort: false,
         }
       ],
-      locale: 'es-es',
-      langs: {
-        'es-es': {
-          pagination: {
-            page_size: 'Elementos por página',
-            first: 'Primera',
-            last: 'Última',
-            prev: 'Anterior',
-            next: 'Siguiente'
-          }
-        }
-      }
+      locale: 'es-es'
     });
     
   }
@@ -202,8 +191,8 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
     if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
       this.apiService.delete(id).subscribe({
         next: () => {
-          this.loadProductos();
           alert('Producto eliminado correctamente');
+          this.loadProductos();
         },
         error: (err) => {
           console.error('Error al eliminar producto:', err);

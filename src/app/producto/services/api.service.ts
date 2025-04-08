@@ -16,8 +16,8 @@ export class ApiService {
     return this.http.post(`${this.baseUrl}`, data);
   }
 
-  put(endpoint: string, id: number, data: any): Observable<any> {
-    return this.http.put(`${this.baseUrl}/${endpoint}/${id}`, data);
+  put(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${id}`, data);
   }
 
   delete(id: number): Observable<void> {

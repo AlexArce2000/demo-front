@@ -4,8 +4,7 @@ import { FormioModule } from '@formio/angular';
 import { ApiService } from '../services/api.service';
 import { Router } from '@angular/router'; 
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { Formio } from '@formio/js';
+
 
 @Component({
   selector: 'app-agregar-producto',
