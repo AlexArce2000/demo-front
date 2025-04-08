@@ -1,0 +1,25 @@
+<!-- agregar-producto.component.html -->
+<div class="container mt-4">
+    <div class="card shadow">
+      <div class="card-header bg-primary text-white">
+        <h2 class="mb-0">Agregar Nuevo Producto</h2>
+      </div>
+      <div class="card-body">
+        <!-- Form.io renderer -->
+        <formio [form]="productForm" (submit)="onSubmit($event)"></formio>
+        
+        <!-- Mensaje de carga -->
+        <div *ngIf="loading" class="text-center mt-3">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2">Guardando producto...</p>
+        </div>
+        
+        <!-- Mensajes de error -->
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+      </div>
+    </div>
+  </div>

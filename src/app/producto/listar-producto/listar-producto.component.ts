@@ -17,10 +17,26 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
   ngOnInit(): void {
     this.loadProductos();
   }
-    ngAfterViewInit(): void {
-    // Asegura que el DOM esté completamente cargado antes de inicializar Tabulator
+  ngAfterViewInit(): void {
+    // Configuración de eventos después de inicializar Tabulator
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement;
+      
+      // Manejar clic en botón de eliminar
+      if (target.closest('.btn-danger')) {
+        const button = target.closest('.btn-danger') as HTMLButtonElement;
+        const id = Number(button.dataset['id']);
+        this.eliminarProduct(id);
+      }
+      
+      // Manejar clic en botón de editar (puedes implementar esto después)
+      if (target.closest('.btn-primary')) {
+        const button = target.closest('.btn-primary') as HTMLButtonElement;
+        const id = Number(button.dataset['id']);
+        console.log('Editar producto con ID:', id);
+      }
+    });
   }
-
 
   loadProductos(): void {
     this.apiService.get("listar").subscribe((data) => {
@@ -30,11 +46,30 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
       data.forEach((item) => {
         item.fechaCreacion = this.formatter(item.fechaCreacion);
         item.fechaModificacion = this.formatter(item.fechaModificacion);
+        item.precio = this.formatNumberWithThousandsSeparator(item.precio);
+        item.acciones= this.generateActionButtons(item.id)
       });
       console.log('Datos formateados:', data);
       this.initTabulator(data);
       
     });
+  }
+  private generateActionButtons(id: number): string {
+    return `
+      <button class="btn btn-danger btn-sm mx-1" data-id="${id}" title="Eliminar">
+        <i class="bi bi-trash"></i>
+      </button>
+      <button class="btn btn-primary btn-sm mx-1" data-id="${id}" title="Editar">
+        <i class="bi bi-pencil"></i>
+      </button>
+    `;
+  }
+  formatNumberWithThousandsSeparator(value: any): string {
+    //formato para separador de miles
+    if (value == null || value === undefined || value === '') {
+      return '';
+    }
+    return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
   }
 
   formatter(cell:any) {
@@ -70,12 +105,15 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
       data: data,
       layout: 'fitColumns',
       paginationSize: 10,
-      height: "311px",
+      height: "300px",
       movableColumns: true,
       headerSort: true,
       columns: [
         { 
-          title: 'ID', field: 'id', width: 80, sorter: 'number' 
+          title: 'ID', 
+          field: 'id', 
+          width: 80, 
+          sorter: 'number' 
         },
         { 
           title: 'Nombre', 
@@ -115,18 +153,13 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
           formatter: 'tickCross',
           headerFilter: 'tickCross',
           headerFilterParams: {
-            tristate: true
+            tristate: false
           }
         },
         {
           title: 'Fecha creación',
           field: 'fechaCreacion',
-          formatter: (cell) => {
-            const val = cell.getValue();
-            debugger;
-            console.log('Valor de fechaCreacion:', val);
-            return val ? new Date(val).toLocaleString('es-ES') : 'N/A';
-          }
+          
         },
         { 
           title: 'Fecha modificación', 
@@ -142,6 +175,7 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
         },
         {
           title: 'Acciones',
+          field: 'acciones',
           width: 120,
           headerSort: false,
         }
@@ -159,15 +193,17 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
         }
       }
     });
+    
   }
   
 
 
-  confirmarEliminacion(id: number): void {
+  eliminarProduct(id: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
       this.apiService.delete(id).subscribe({
         next: () => {
           this.loadProductos();
+          alert('Producto eliminado correctamente');
         },
         error: (err) => {
           console.error('Error al eliminar producto:', err);
@@ -175,5 +211,6 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
         }
       });
     }
-  }
+  } 
+  
 }

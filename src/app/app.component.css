@@ -1,0 +1,15 @@
+@font-face {
+    font-family: 'MiFuente';
+    src: url('/assets/fonts/ComicMono.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  body {
+    font-family: 'ComicMono', sans-serif;
+}
+
+nav button {
+    font-family: 'ComicMono', sans-serif;
+}
+  
