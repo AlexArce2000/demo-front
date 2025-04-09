@@ -185,8 +185,6 @@ export class ProductoListComponent implements OnInit, AfterViewInit{
     
   }
   
-
-
   eliminarProduct(id: number): void {
     if (confirm('¿Estás seguro de que deseas eliminar este producto?')) {
       this.apiService.delete(id).subscribe({
